@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+python-dotenv
+pdfplumber
+PyPDF2
+python-docx
+Werkzeug
+scikit-learn
+lxml
