@@ -155,6 +155,7 @@ You have been shortlisted for the next steps in the selection process.
 
 Regards,
 HR Team
+NAV Tech.
 """
 
         msg = MIMEMultipart()
@@ -178,7 +179,7 @@ HR Team
 class ScoringService:
     def __init__(self):
         self.tfidf = TFIDFService()
-        self.semantic_weight = 0.7
+        #self.semantic_weight = 0.7
         self.skill_weight = 0.3
 
     def score(self, job_description, resume_items):
@@ -192,7 +193,7 @@ class ScoringService:
             semantic_score = semantic_scores[i]
 
             final = (
-                self.semantic_weight * semantic_score +
+              #  self.semantic_weight * semantic_score +
                 self.skill_weight * skill_score
             )
 
@@ -200,8 +201,8 @@ class ScoringService:
                 "name": item["name"],
                 "email": item["email"],
                 "score": round(final, 2),
-                "semantic_score": round(semantic_score, 2),
-                "skill_score": round(skill_score, 2),
+                #"semantic_score": round(semantic_score, 2),
+                #"skill_score": round(skill_score, 2),
                 "skills": item["skills"]
             })
 
