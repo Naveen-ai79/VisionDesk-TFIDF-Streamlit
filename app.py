@@ -330,7 +330,7 @@ class ScoringService:
     def __init__(self):
         self.tfidf = TFIDFService()
         #self.semantic_weight = 0.7
-        self.skill_weight = 0.3
+        self.skill_weight = 1
 
     def score(self, job_description, resume_items):
         resume_texts = [r["text"] for r in resume_items]
@@ -342,10 +342,7 @@ class ScoringService:
             skill_score = len(set(jd_skills).intersection(item["skills"])) / max(len(jd_skills), 1) * 100
             semantic_score = semantic_scores[i]
 
-            final = (
-              #  self.semantic_weight * semantic_score +
-                self.skill_weight * skill_score
-            )
+            final = skill_score
 
             results.append({
                 "name": item["name"],
@@ -410,9 +407,21 @@ if "top_n" not in st.session_state:
     st.session_state.top_n = 3
 
 job_description = st.text_area("Job Description", height=200)
+
 uploaded_files = st.file_uploader("Upload resumes", accept_multiple_files=True)
 
-top_n = st.number_input("Top N", min_value=1, max_value=50, value=3)
+uploaded_files = st.file_uploader("Upload resumes", accept_multiple_files=True)
+
+file_count = len(uploaded_files) if uploaded_files else 1
+
+top_n = st.number_input(
+    "Top N Candidates",
+    min_value=1,
+    max_value=file_count,
+    value=min(3, file_count),
+    step=1
+)
+
 
 # ----------------------------------------------------
 # RANK BUTTON
