@@ -56,10 +56,137 @@ def secure_temp_save(file_storage):
 # SKILL EXTRACTION
 # ==========================================================
 COMMON_SKILLS = [
-    "python", "django", "flask", "fastapi", "rest", "api", "sql", "postgres", "mysql",
-    "aws", "azure", "gcp", "aws lambda", "azure functions", "cloud", "docker", "kubernetes",
-    "machine learning", "ml", "data science", "pandas", "numpy", "spark"
+
+    # Programming Languages
+    "python", "java", "javascript", "typescript", "c", "c++", "c#", "go", "ruby",
+    "php", "swift", "kotlin", "r", "scala", "perl", "rust", "dart", "matlab",
+    "bash", "shell", "powershell",
+
+    # Web Development
+    "html", "css", "bootstrap", "jquery",
+    "react", "angular", "vue", "next.js", "nuxt.js", "svelte",
+    "node", "express", "django", "flask", "fastapi", "spring boot",
+    "laravel", "codeigniter", "wordpress", "drupal",
+
+    # Mobile Development
+    "flutter", "react native", "android", "ios", "swiftui", "jetpack compose",
+
+    # Databases
+    "sql", "mysql", "postgres", "postgresql", "sqlite",
+    "mongodb", "cassandra", "dynamodb", "redis", "elasticsearch",
+    "oracle", "mariadb", "snowflake", "bigquery", "couchdb",
+
+    # Cloud Platforms
+    "aws", "amazon web services", "lambda", "rds", "ec2", "s3",
+    "azure", "azure devops", "azure functions",
+    "gcp", "google cloud", "cloud run", "cloud functions",
+    "digitalocean", "heroku", "openstack",
+
+    # DevOps & Infrastructure
+    "docker", "kubernetes", "helm", "terraform", "ansible", "jenkins",
+    "gitlab", "github actions", "cicd", "ci/cd",
+    "prometheus", "grafana", "nagios", "elk", "logstash", "kibana",
+    "sonarqube", "nexus", "maven", "gradle",
+
+    # Data Science / ML / AI
+    "machine learning", "deep learning", "data science", "ai",
+    "ml", "dl", "nlp", "computer vision", "ocr",
+    "pandas", "numpy", "scikit-learn", "scipy",
+    "tensorflow", "keras", "pytorch", "openai", "huggingface",
+    "llm", "gpt", "transformers",
+    "matplotlib", "seaborn", "plotly",
+    "jupyter", "colab",
+
+    # Big Data
+    "hadoop", "spark", "pyspark", "hive", "pig", "kafka",
+    "airflow", "databricks", "kinesis", "glue",
+
+    # Business Intelligence / Analytics
+    "power bi", "tableau", "qlik", "excel", "advanced excel",
+    "looker", "microstrategy",
+
+    # AI/ML Ops
+    "mlops", "dvc", "mlflow", "kubeflow",
+
+    # Networking & Security
+    "tcp/ip", "dns", "vpn", "firewall",
+    "cybersecurity", "ethical hacking", "penetration testing",
+    "wireshark", "burp suite", "nessus", "splunk",
+    "iam", "okta", "oauth", "jwt",
+
+    # Operating Systems
+    "linux", "ubuntu", "centos", "windows", "macos",
+
+    # Testing / QA
+    "selenium", "pytest", "junit", "testng", "postman",
+    "cypress", "jmeter", "rest assured",
+
+    # Project Management / Agile
+    "jira", "confluence", "trello", "asana",
+    "scrum", "agile", "kanban",
+
+    # Tools & Version Control
+    "git", "github", "bitbucket", "svn",
+    "vs code", "intellij", "pycharm",
+    "eclipse", "postman", "swagger", "figma",
+
+    # Soft Skills / Workflows (optional)
+    "communication", "team management", "leadership",
+    "presentation", "documentation",
+
+    # Additional Tech Skills
+    "api", "rest", "restful", "graphql",
+    "microservices", "soa", "distributed systems",
+    "sockets", "websockets", "mqtt",
+
+    # AI Cloud Tools
+    "vertex ai", "sagemaker", "azure ml",
+
+    # RPA
+    "uipath", "automation anywhere", "blue prism",
+
+    # ERP
+    "sap", "oracle fusion", "netsuite",
+
+    # Others
+    "devsecops", "k6", "bash scripting", "etl", "data warehousing"
+
+    # Incident & Service Management
+"incident management",
+"problem management",
+"change management",
+"service management",
+"service operations",
+"service desk",
+"itil",
+"itil framework",
+"itil v3",
+"itil v4",
+"service level management",
+"service request management",
+"sla",
+"ola",
+"availability management",
+"capacity management",
+"event management",
+"alert management",
+"on-call",
+"major incident management",
+"root cause analysis",
+"rca",
+"post-incident review",
+"p1 incident",
+"p2 incident",
+"service outage",
+"monitoring",
+"ticketing",
+"jira service desk",
+"servicenow",
+"bmc remedy",
+"solarwinds"
+
 ]
+
 
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
 
@@ -69,10 +196,14 @@ def normalize_text(text: str):
 def extract_skills_from_text(text: str):
     t = normalize_text(text)
     found = set()
+
     for skill in COMMON_SKILLS:
-        if skill in t:
+        pattern = r"\b" + re.escape(skill) + r"\b"
+        if re.search(pattern, t):
             found.add(skill)
+
     return list(found)
+
 
 def extract_emails_from_text(text: str):
     if not text:
@@ -83,24 +214,40 @@ def extract_emails_from_text(text: str):
 # RESUME PARSER
 # ==========================================================
 def extract_text_from_pdf(path):
-    text_parts = []
     try:
+        # BEST: pdfminer (more accurate than pdfplumber / PyPDF2)
+        import pdfminer.high_level as pdfminer
+        text = pdfminer.extract_text(path)
+        if text and text.strip():
+            return text
+    except:
+        pass
+
+    # FALLBACK 1: pdfplumber
+    try:
+        text_parts = []
         with pdfplumber.open(path) as pdf:
             for p in pdf.pages:
-                t = p.extract_text()
-                if t:
-                    text_parts.append(t)
-    except Exception:
-        try:
-            with open(path, 'rb') as f:
-                reader = PyPDF2.PdfReader(f)
-                for p in reader.pages:
-                    t = p.extract_text()
-                    if t:
-                        text_parts.append(t)
-        except Exception as e:
-            raise RuntimeError(f"PDF parsing failed: {e}")
-    return "\n".join(text_parts).strip()
+                t = p.extract_text() or ""
+                text_parts.append(t)
+        text = "\n".join(text_parts).strip()
+        if text:
+            return text
+    except:
+        pass
+
+    # FALLBACK 2: PyPDF2
+    try:
+        text_parts = []
+        with open(path, 'rb') as f:
+            reader = PyPDF2.PdfReader(f)
+            for p in reader.pages:
+                t = p.extract_text() or ""
+                text_parts.append(t)
+        return "\n".join(text_parts).strip()
+    except Exception as e:
+        raise RuntimeError(f"PDF parsing failed: {e}")
+
 
 def extract_text_from_docx(path):
     try:
