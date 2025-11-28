@@ -151,11 +151,14 @@ class EmailService:
         body = f"""
 Dear {candidate_name},
 
-You have been shortlisted for the next steps in the selection process.
+We are pleased to inform you that you have been shortlisted for the selection process at "Nav Tech Solution".
+
+Our team will share further details regarding the next steps shortly.
+Please keep an eye on your email for updates.
 
 Regards,
 HR Team
-NAV Tech.
+NAV Tech Solution , Bangalore.
 """
 
         msg = MIMEMultipart()
