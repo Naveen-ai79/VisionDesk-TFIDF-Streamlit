@@ -410,8 +410,6 @@ job_description = st.text_area("Job Description", height=200)
 
 uploaded_files = st.file_uploader("Upload resumes", accept_multiple_files=True)
 
-uploaded_files = st.file_uploader("Upload resumes", accept_multiple_files=True)
-
 file_count = len(uploaded_files) if uploaded_files else 1
 
 top_n = st.number_input(
